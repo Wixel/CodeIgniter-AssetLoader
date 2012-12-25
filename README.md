@@ -25,7 +25,7 @@ by specifying the parent asset directory as follows:
 <?php $this->assetload->queue(false, '/static'); ?>
 ```
 
-If you wish to enable cache-busting by automatically adding a timestamp to include paths, simply change the first argument to the queue() call to true 
+If you wish to enable cache-busting by automatically adding a timestamp to include paths, simply change the first argument to the `queue()` method to true 
 as follows:
 
 ```php
@@ -35,7 +35,7 @@ as follows:
 Defining a Manifest File:
 -----
 
-Your manifest file should be called assets.ini and placed inside your parent assets directory: /assets/assets.ini
+Your manifest file should be called `assets.ini` and placed inside your parent assets directory: `/assets/assets.ini`
 
 # Structure
 
@@ -63,3 +63,9 @@ js[]  = "js/vendor/raphael-min.js"
 js[]  = "js/plugins.js"
 js[]  = "js/application.js"
 ```
+
+#  TODO
+
+- Wildcard lazy-loader
+- Ability to specify link and script tag attributes like defer & async
+- Split css and js loader methods to allow loading scripts near the end of the body tag
