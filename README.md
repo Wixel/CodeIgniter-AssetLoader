@@ -66,6 +66,8 @@ js[]  = "js/application.js"
 
 #  TODO
 
+- Ability to specify default assets to always load before all others
+- Smarter cache management
 - Wildcard lazy-loader
 - Ability to specify link and script tag attributes like defer & async
 - Split css and js loader methods to allow loading scripts near the end of the body tag
