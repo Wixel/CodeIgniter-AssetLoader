@@ -9,7 +9,7 @@
  * @version     1.0
  */
 class AssetLoad
-{
+{	
 	/**
 	 * Simple queue FIFO mechanism to load the assets
 	 *
