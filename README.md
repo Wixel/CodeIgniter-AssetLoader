@@ -36,3 +36,30 @@ Defining a Manifest File:
 -----
 
 Your manifest file should be called assets.ini and placed inside your parent assets directory: /assets/assets.ini
+
+# Structure
+
+```
+; Asset loader manifest file
+
+[development]
+css[] = "css/reset.css"
+css[] = "css/application.css"
+js[]  = "js/vendor/modernizr-2.6.2.min.js"
+js[]  = "js/vendor/raphael-min.js"
+js[]  = "js/plugins.js"
+js[]  = "js/application.js"
+js[]  = "js/debugger.js"
+
+[production]
+css[] = "css/compiled.css"
+js[]  = "js/compiled.js"
+
+[testing]
+css[] = "css/reset.css"
+css[] = "css/application.css"
+js[]  = "js/vendor/modernizr-2.6.2.min.js"
+js[]  = "js/vendor/raphael-min.js"
+js[]  = "js/plugins.js"
+js[]  = "js/application.js"
+```
