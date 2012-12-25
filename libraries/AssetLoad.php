@@ -47,9 +47,8 @@ class AssetLoad
 			foreach($js as $e) {
 				echo self::script_include($manifest_path.$e.$timestamp)."\n";
 			}	
-			
-			unset($manifest); // clean	
 		}
+		unset($manifest); // clean	
 	}
 	
 	/**
