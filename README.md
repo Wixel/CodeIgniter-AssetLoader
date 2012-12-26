@@ -9,7 +9,7 @@ Usage:
 1. Download and extract to your CodeIgniter libraries directory
 2. Either autoload the library or explicitly load it in your controllers
 3. Define your asset manifest file for your environments and optionally provide default assets for all environments
-4. Replace the css link & script tags with <?php $this->assetload->queue(); ?> in your template head section
+4. Replace the css link & script tags with `<?php $this->assetload->queue(); ?>` in your template head section
 5. Enjoy the sanity that follows! :)
 
 #  Methods
@@ -20,7 +20,7 @@ AssetLoad::queue($cache_bust = false, $manifest_path = 'assets/', $manifest_file
 
 # Changing Defaults
 
-The loader assumes all your assets are contained in child directories within the `/assets` directory in your project root, but you can change this 
+The loader assumes all your assets are contained in child directories within the `/assets` directory in your `project root`, but you can change this 
 by specifying the parent asset directory as follows:
 
 ```php
