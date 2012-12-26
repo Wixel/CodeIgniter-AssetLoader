@@ -11,15 +11,16 @@
 class AssetLoad
 {	
 	/**
-	 * Simple queue FIFO mechanism to load the assets
+	 * Simple FIFO mechanism to load the assets
 	 *
 	 * @param boolean $cache_bust
 	 * @param string $manifest_path
+	 * @param string $manifest_file_name	
 	 * @return void
 	 */
-	public static function queue($cache_bust = false, $manifest_path = 'assets/')
+	public static function queue($cache_bust = false, $manifest_path = 'assets/', $manifest_file_name = 'assets.ini')
 	{
-		$manifest_file = $manifest_path.'assets.ini';
+		$manifest_file = $manifest_path.$manifest_file_name;
 		$timestamp 	   = null;
 		
 		if($cache_bust) {
@@ -36,6 +37,21 @@ class AssetLoad
 		
 		$manifest = parse_ini_file($manifest_file, true);
 		
+		// Load global/default assets before others		
+		if(isset($manifest['defaults'])) {
+			$css = (isset($manifest['defaults']['css']))? $manifest['defaults']['css'] : array();
+			$js  = (isset($manifest['defaults']['js'])) ? $manifest['defaults']['js']  : array();
+			
+			foreach($css as $e) {
+				echo self::css_link($manifest_path.$e.$timestamp)."\n";
+			}
+			
+			foreach($js as $e) {
+				echo self::script_include($manifest_path.$e.$timestamp)."\n";
+			}	
+		}		
+		
+		// Load environment specific assets
 		if(isset($manifest[ENVIRONMENT])) {
 			$css = (isset($manifest[ENVIRONMENT]['css']))? $manifest[ENVIRONMENT]['css'] : array();
 			$js  = (isset($manifest[ENVIRONMENT]['js'])) ? $manifest[ENVIRONMENT]['js']  : array();

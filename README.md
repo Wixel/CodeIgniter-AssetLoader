@@ -8,17 +8,19 @@ Usage:
 
 1. Download and extract to your CodeIgniter libraries directory
 2. Either autoload the library or explicitly load it in your controllers
-3. Define your asset manifest file for your environments
+3. Define your asset manifest file for your environments and optionally provide default assets for all environments
 4. Replace the css link & script tags with <?php $this->assetload->queue(); ?> in your template head section
 5. Enjoy the sanity that follows! :)
 
 #  Methods
 
-AssetLoad::queue($cache_bust = false, $manifest_path = 'assets/')
+```php
+AssetLoad::queue($cache_bust = false, $manifest_path = 'assets/', $manifest_file_name = 'assets.ini')
+```
 
 # Changing Defaults
 
-The loader assumes all your assets are contained in child directories within the /assets directory in your project root, but you can change this 
+The loader assumes all your assets are contained in child directories within the `/assets` directory in your project root, but you can change this 
 by specifying the parent asset directory as follows:
 
 ```php
@@ -56,8 +58,11 @@ Your manifest file should be called `assets.ini` and placed inside your parent a
 ```
 ; Asset loader manifest file
 
-[development]
+[defaults]
 css[] = "css/reset.css"
+js[]  = "js/html5shiv.min.js"
+
+[development]
 css[] = "css/application.css"
 js[]  = "js/vendor/modernizr-2.6.2.min.js"
 js[]  = "js/vendor/raphael-min.js"
@@ -70,7 +75,6 @@ css[] = "css/compiled.css"
 js[]  = "js/compiled.js"
 
 [testing]
-css[] = "css/reset.css"
 css[] = "css/application.css"
 js[]  = "js/vendor/modernizr-2.6.2.min.js"
 js[]  = "js/vendor/raphael-min.js"
@@ -80,7 +84,6 @@ js[]  = "js/application.js"
 
 #  TODO
 
-- Ability to specify default assets to always load before all others
 - Smarter cache management
 - Wildcard lazy-loader
 - Ability to specify link and script tag attributes like defer & async
