@@ -22,14 +22,28 @@ The loader assumes all your assets are contained in child directories within the
 by specifying the parent asset directory as follows:
 
 ```php
-<?php $this->assetload->queue(false, '/static'); ?>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Your title</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+	<?php $this->assetload->queue(false, '/static'); ?>
+</head>
 ```
 
 If you wish to enable cache-busting by automatically adding a timestamp to include paths, simply change the first argument to the `queue()` method to true 
 as follows:
 
 ```php
-<?php $this->assetload->queue(true); ?>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Your title</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+	<?php $this->assetload->queue(true); ?>
+</head>
 ```
 
 Defining a Manifest File:
