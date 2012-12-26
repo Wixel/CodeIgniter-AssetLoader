@@ -1,7 +1,7 @@
 CI-AssetLoad
 ============
 
-A CodeIgniter library for loading CSS & JS assets from a manifest file supporting different environments
+A CodeIgniter library for loading CSS & JS assets from a manifest file supporting different environments with an optional cache busting mechanism.
 
 Usage:
 -----
