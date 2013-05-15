@@ -34,7 +34,7 @@ by specifying the parent asset directory as follows:
 </head>
 ```
 
-If you wish to enable cache-busting by automatically adding a timestamp to include paths, simply change the first argument to the `queue()` method to true 
+If you wish to enable cache-busting by automatically adding a timestamp to include paths in production or testing environments, simply change the first argument to the `queue()` method to true 
 as follows:
 
 ```php
