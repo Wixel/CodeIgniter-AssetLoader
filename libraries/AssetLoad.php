@@ -14,11 +14,11 @@ class AssetLoad
 	 * Simple FIFO mechanism to load the assets
 	 *
 	 * @param boolean $cache_bust
-	 * @param string $manifest_path
 	 * @param string $manifest_file_name	
+	 * @param string $manifest_path	
 	 * @return void
 	 */
-	public static function queue($cache_bust = false, $manifest_path = 'assets/', $manifest_file_name = 'assets.ini')
+	public function queue($cache_bust = false, $manifest_file_name = 'assets.ini', $manifest_path = 'assets/')
 	{
 		$manifest_file = $manifest_path.$manifest_file_name;
 		$timestamp 	   = null;
@@ -35,36 +35,67 @@ class AssetLoad
 			throw new Exception("The asset loader manifest file could not be found at '$manifest_file'");
 		}
 		
+		// Parse the ini asset manifest
 		$manifest = parse_ini_file($manifest_file, true);
 		
-		// Load global/default assets before others		
+		// Global/Default assets
 		if(isset($manifest['defaults'])) {
 			$css = (isset($manifest['defaults']['css']))? $manifest['defaults']['css'] : array();
 			$js  = (isset($manifest['defaults']['js'])) ? $manifest['defaults']['js']  : array();
 			
 			foreach($css as $e) {
-				echo self::css_link($manifest_path.$e.$timestamp)."\n";
+				// Check for external or local resource (http:// https:// etc)
+				if(strstr($e, '//') !== false) {
+					echo self::css($e.$timestamp);
+				} else {
+					echo self::css("/".$manifest_path.$e.$timestamp);
+				}
 			}
 			
 			foreach($js as $e) {
-				echo self::script_include($manifest_path.$e.$timestamp)."\n";
+				// Check for external or local resource (http:// https:// etc)
+				if(strstr($e, '//') !== false) {
+					echo self::script($e.$timestamp);
+				} else {
+					echo self::script("/".$manifest_path.$e.$timestamp);
+				}
 			}	
 		}		
 		
-		// Load environment specific assets
+		// Environment specific
 		if(isset($manifest[ENVIRONMENT])) {
 			$css = (isset($manifest[ENVIRONMENT]['css']))? $manifest[ENVIRONMENT]['css'] : array();
 			$js  = (isset($manifest[ENVIRONMENT]['js'])) ? $manifest[ENVIRONMENT]['js']  : array();
 			
 			foreach($css as $e) {
-				echo self::css_link($manifest_path.$e.$timestamp)."\n";
+				// Check for external or local resource (http:// https:// etc)
+				if(strstr($e, '//') !== false) {
+					echo self::css($e.$timestamp);
+				} else {
+					echo self::css("/".$manifest_path.$e.$timestamp);
+				}
 			}
 			
+			// Check & automatically load a routed CSS file
+			if(isset($manifest[ENVIRONMENT]['css_routing'])) {
+				echo self::css_route($manifest_path.$manifest[ENVIRONMENT]['css_routing']);
+			}			
+			
 			foreach($js as $e) {
-				echo self::script_include($manifest_path.$e.$timestamp)."\n";
+				// Check for external or local resource (http:// https:// etc)
+				if(strstr($e, '//') !== false) {
+					echo self::script($e.$timestamp);
+				} else {
+					echo self::script("/".$manifest_path.$e.$timestamp);
+				}
 			}	
+			
+			// Check & automatically load a routed JS file
+			if(isset($manifest[ENVIRONMENT]['js_routing'])) {
+				echo self::script_route($manifest_path.$manifest[ENVIRONMENT]['js_routing']);
+			}
 		}
-		unset($manifest); // clean	
+		unset($manifest); // clean up
 	}
 	
 	/**
@@ -73,9 +104,9 @@ class AssetLoad
 	 * @param string $path
 	 * @return string
 	 */
-	private static function css_link($path)
+	private static function css($path)
 	{
-		return '<link rel="stylesheet" href="/'.$path.'">';
+		return '<link rel="stylesheet" href="'.$path.'">'."\n";
 	}
 	
 	/**
@@ -84,9 +115,47 @@ class AssetLoad
 	 * @param string $path
 	 * @return string
 	 */
-	private static function script_include($path)
+	private static function script($path)
 	{
-		return '<script src="/'.$path.'"></script>';
+		return '<script src="'.$path.'"></script>'."\n";
+	}
+	
+	/**
+	 * Generate the automated JS file path according to the current controller
+	 *
+	 * @param string $route
+	 * @return string
+	 */
+	private static function script_route($path)
+	{
+		$ci = &get_instance();
+		
+		return self::script($path.'/'.$ci->router->fetch_class().'.js');
+	}
+	
+	/**
+	 * Generate the automated JS file path according to the current controller
+	 *
+	 * @param string $path
+	 * @return string
+	 */
+	private static function css_route($path)
+	{
+		$ci = &get_instance();
+		
+		return self::css($path.'/'.$ci->router->fetch_class().'.css');
+	}
+	
+	/**
+	 * Return the class name of the current controller to use as a body class
+	 *
+	 * @return string
+	 */
+	public function body_class()
+	{
+		$ci = &get_instance();
+		
+		echo $ci->router->fetch_class();
 	}
 	
 } //EOC
