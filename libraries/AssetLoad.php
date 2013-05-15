@@ -23,12 +23,13 @@ class AssetLoad
 		$manifest_file = $manifest_path.$manifest_file_name;
 		$timestamp 	   = null;
 		
-		if($cache_bust) {
-			$timestamp = '?'.time();
-		}
-		
 		if(!defined('ENVIRONMENT')) {
 			define('ENVIRONMENT', 'development');
+		}
+				
+		// Let's bust that cache in dev anyways
+		if($cache_bust || ENVIRONMENT == 'development') {
+			$timestamp = '?'.time();
 		}
 		
 		if(!file_exists($manifest_file)) {
