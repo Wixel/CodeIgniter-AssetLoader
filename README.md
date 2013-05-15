@@ -84,7 +84,6 @@ js[]  = "js/application.js"
 
 #  TODO
 
-- Smarter cache management
 - Wildcard lazy-loader
 - Ability to specify link and script tag attributes like defer & async
 - Split css and js loader methods to allow loading scripts near the end of the body tag
