@@ -1,7 +1,7 @@
 CI-AssetLoad
 ============
 
-A CodeIgniter library for loading CSS & JS assets from a manifest file supporting different environments with an optional cache busting mechanism.
+A CodeIgniter library for loading CSS & JS assets from a manifest file supporting different environments with an optional cache busting mechanism. You can also specify assets for Internet Explorer instead of using conditional CSS & JS.
 
 Usage:
 -----
@@ -48,6 +48,34 @@ as follows:
 </head>
 ```
 
+# Multiple Manifest Files per Project
+
+It is possible to load different manifest files within a single project. A good example would be if you are running a website and a dashboard/app from one framework installation. Here's how to do to:
+
+In the website header:
+```php
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Website</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+	<?php $this->assetload->queue(false, 'website.ini'); ?>
+</head>
+```
+
+In the application/dashboard header:
+```php
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Dashboard</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+	<?php $this->assetload->queue(false, 'dashboard.ini'); ?>
+</head>
+```
+
 Defining a Manifest File:
 -----
 
@@ -62,6 +90,14 @@ Your manifest file should be called `assets.ini` and placed inside your parent a
 css[] = "css/reset.css"
 js[]  = "js/html5shiv.min.js"
 
+[ie6]
+css[] = "css/chromeframe.css"
+js[] = "js/chromeframe.js"
+
+[ie7]
+css[] = "css/paddingfix.css"
+js[] = "js/chromeframe.js"
+
 [development]
 css[] = "css/application.css"
 js[]  = "js/vendor/modernizr-2.6.2.min.js"
@@ -72,10 +108,12 @@ js[]  = "js/debugger.js"
 
 [production]
 css[] = "css/compiled.css"
+js[]  = "//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"
 js[]  = "js/compiled.js"
 
 [testing]
 css[] = "css/application.css"
+js[]  = "//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"
 js[]  = "js/vendor/modernizr-2.6.2.min.js"
 js[]  = "js/vendor/raphael-min.js"
 js[]  = "js/plugins.js"

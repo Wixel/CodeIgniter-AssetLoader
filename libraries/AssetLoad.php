@@ -10,6 +10,29 @@
  */
 class AssetLoad
 {	
+	private $ci        = null;
+	private $ie_id     = null;
+	private $timestamp = null;
+	private $load_path = '/';
+	
+	public function __construct() 
+	{
+		$this->ci = &get_instance();
+		
+		// Set everything up
+		if(!defined('ENVIRONMENT')) {
+			define('ENVIRONMENT', 'development');
+		}
+		
+		// Load dependencies
+		$this->ci->load->helper('url');
+		$this->ci->load->library('user_agent');		
+		
+		// Let's check if we're dealing with IE
+		if($this->ci->agent->browser() == 'Internet Explorer') {
+			$this->ie_id = 'ie'.$this->ci->agent->version();
+		}	
+	}
 	/**
 	 * Simple FIFO mechanism to load the assets
 	 *
@@ -21,16 +44,14 @@ class AssetLoad
 	public function queue($cache_bust = false, $manifest_file_name = 'assets.ini', $manifest_path = 'assets/')
 	{
 		$manifest_file = $manifest_path.$manifest_file_name;
-		$timestamp 	   = null;
 		
-		if(!defined('ENVIRONMENT')) {
-			define('ENVIRONMENT', 'development');
-		}
-				
+		// Set the load path
+		$this->load_path = $manifest_path;
+		
 		// Let's bust that cache in dev anyways
 		if($cache_bust || ENVIRONMENT == 'development') {
-			$timestamp = '?'.time();
-		}
+			$this->timestamp = '?'.time();
+		}		
 		
 		if(!file_exists($manifest_file)) {
 			throw new Exception("The asset loader manifest file could not be found at '$manifest_file'");
@@ -41,62 +62,52 @@ class AssetLoad
 		
 		// Global/Default assets
 		if(isset($manifest['defaults'])) {
-			$css = (isset($manifest['defaults']['css']))? $manifest['defaults']['css'] : array();
-			$js  = (isset($manifest['defaults']['js'])) ? $manifest['defaults']['js']  : array();
-			
-			foreach($css as $e) {
-				// Check for external or local resource (http:// https:// etc)
-				if(strstr($e, '//') !== false) {
-					echo self::css($e.$timestamp);
-				} else {
-					echo self::css("/".$manifest_path.$e.$timestamp);
-				}
-			}
-			
-			foreach($js as $e) {
-				// Check for external or local resource (http:// https:// etc)
-				if(strstr($e, '//') !== false) {
-					echo self::script($e.$timestamp);
-				} else {
-					echo self::script("/".$manifest_path.$e.$timestamp);
-				}
-			}	
+			$this->load_assets($manifest['defaults']);
 		}		
 		
 		// Environment specific
 		if(isset($manifest[ENVIRONMENT])) {
-			$css = (isset($manifest[ENVIRONMENT]['css']))? $manifest[ENVIRONMENT]['css'] : array();
-			$js  = (isset($manifest[ENVIRONMENT]['js'])) ? $manifest[ENVIRONMENT]['js']  : array();
-			
-			foreach($css as $e) {
-				// Check for external or local resource (http:// https:// etc)
-				if(strstr($e, '//') !== false) {
-					echo self::css($e.$timestamp);
-				} else {
-					echo self::css("/".$manifest_path.$e.$timestamp);
-				}
-			}
-			
-			// Check & automatically load a routed CSS file
-			if(isset($manifest[ENVIRONMENT]['css_routing'])) {
-				echo self::css_route($manifest_path.$manifest[ENVIRONMENT]['css_routing']);
-			}			
-			
-			foreach($js as $e) {
-				// Check for external or local resource (http:// https:// etc)
-				if(strstr($e, '//') !== false) {
-					echo self::script($e.$timestamp);
-				} else {
-					echo self::script("/".$manifest_path.$e.$timestamp);
-				}
-			}	
-			
-			// Check & automatically load a routed JS file
-			if(isset($manifest[ENVIRONMENT]['js_routing'])) {
-				echo self::script_route($manifest_path.$manifest[ENVIRONMENT]['js_routing']);
+			$this->load_assets($manifest[ENVIRONMENT]);			
+		}
+		
+		// Let's check for Internet Explorer specific declarations
+		if(!empty($this->ie_id) && isset($manifest[$this->ie_id])) {
+			$this->load_assets($manifest[$this->ie_id]);
+		}
+		
+		unset($manifest); // clean up
+	}
+	
+	/**
+	 * Perform the actual asset loading
+	 * 
+	 * @param array $env
+	 * @return void
+	 */
+	private function load_assets($env)
+	{
+		$css = (isset($env['css']))? $env['css'] : array();
+		$js  = (isset($env['js'])) ? $env['js']  : array();
+		
+		foreach($css as $e) {
+			// Check for external or local resource (http:// https:// etc)
+			if(strstr($e, '//') !== false) {
+				echo $this->css($e.$this->timestamp);
+			} else {
+				echo $this->css("/".$this->load_path.$e.$this->timestamp);
 			}
 		}
-		unset($manifest); // clean up
+		
+		foreach($js as $e) {
+			// Check for external or local resource (http:// https:// etc)
+			if(strstr($e, '//') !== false) {
+				echo $this->script($e.$this->timestamp);
+			} else {
+				echo $this->script("/".$this->load_path.$e.$this->timestamp);
+			}
+		}	
+		
+		return;	
 	}
 	
 	/**
@@ -105,7 +116,7 @@ class AssetLoad
 	 * @param string $path
 	 * @return string
 	 */
-	private static function css($path)
+	private function css($path)
 	{
 		return '<link rel="stylesheet" href="'.$path.'">'."\n";
 	}
@@ -116,7 +127,7 @@ class AssetLoad
 	 * @param string $path
 	 * @return string
 	 */
-	private static function script($path)
+	private function script($path)
 	{
 		return '<script src="'.$path.'"></script>'."\n";
 	}
@@ -127,11 +138,9 @@ class AssetLoad
 	 * @param string $route
 	 * @return string
 	 */
-	private static function script_route($path)
+	public static function script_route($path)
 	{
-		$ci = &get_instance();
-		
-		return self::script($path.'/'.$ci->router->fetch_class().'.js');
+		return self::script($path.'/'.$this->ci->router->fetch_class().'.js');
 	}
 	
 	/**
@@ -140,11 +149,9 @@ class AssetLoad
 	 * @param string $path
 	 * @return string
 	 */
-	private static function css_route($path)
+	public static function css_route($path)
 	{
-		$ci = &get_instance();
-		
-		return self::css($path.'/'.$ci->router->fetch_class().'.css');
+		return self::css($path.'/'.$this->ci->router->fetch_class().'.css');
 	}
 	
 	/**
@@ -154,9 +161,7 @@ class AssetLoad
 	 */
 	public function body_class()
 	{
-		$ci = &get_instance();
-		
-		echo $ci->router->fetch_class();
+		echo $this->ci->router->fetch_class();
 	}
 	
 } //EOC
