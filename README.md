@@ -15,7 +15,7 @@ Usage:
 #  Methods
 
 ```php
-AssetLoad::queue($cache_bust = false, $manifest_path = 'assets/', $manifest_file_name = 'assets.ini')
+AssetLoad::queue($cache_bust = false, $manifest_file_name = 'assets.ini', $manifest_path = 'assets/')
 ```
 
 # Changing Defaults
@@ -30,7 +30,7 @@ by specifying the parent asset directory as follows:
     <title>Your title</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
-	<?php $this->assetload->queue(false, '/static'); ?>
+	<?php $this->assetload->queue(false); ?>
 </head>
 ```
 

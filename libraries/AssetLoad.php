@@ -45,6 +45,10 @@ class AssetLoad
 	{
 		$manifest_file = $manifest_path.$manifest_file_name;
 		
+		if(!file_exists($manifest_file)) {
+			throw new Exception("The asset loader manifest file could not be found at '$manifest_file'");
+		}
+		
 		// Set the load path
 		$this->load_path = $manifest_path;
 		
@@ -52,10 +56,6 @@ class AssetLoad
 		if($cache_bust || ENVIRONMENT == 'development') {
 			$this->timestamp = '?'.time();
 		}		
-		
-		if(!file_exists($manifest_file)) {
-			throw new Exception("The asset loader manifest file could not be found at '$manifest_file'");
-		}
 		
 		// Parse the ini asset manifest
 		$manifest = parse_ini_file($manifest_file, true);
