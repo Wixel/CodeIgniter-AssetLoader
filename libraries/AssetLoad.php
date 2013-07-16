@@ -67,7 +67,7 @@ class AssetLoad
 		
 		// Environment specific
 		if(isset($manifest[ENVIRONMENT])) {
-			$this->load_assets($manifest[ENVIRONMENT]);			
+			$this->load_assets($manifest[ENVIRONMENT]);
 		}
 		
 		// Let's check for Internet Explorer specific declarations
