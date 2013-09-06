@@ -14,6 +14,7 @@ class AssetLoad
 	private $ie_id     = null;
 	private $timestamp = null;
 	private $load_path = '/';
+	private $dns       = array();
 	
 	public function __construct() 
 	{
@@ -75,6 +76,9 @@ class AssetLoad
 			$this->load_assets($manifest[$this->ie_id]);
 		}
 		
+		// Let's load the DNS prefetch tags automatically
+		$this->dns_prefetch();
+		
 		unset($manifest); // clean up
 	}
 	
@@ -92,6 +96,7 @@ class AssetLoad
 		foreach($css as $e) {
 			// Check for external or local resource (http:// https:// etc)
 			if(strstr($e, '//') !== false) {
+				$this->parse_dns($e);
 				echo $this->css($e.$this->timestamp);
 			} else {
 				echo $this->css("/".$this->load_path.$e.$this->timestamp);
@@ -101,6 +106,7 @@ class AssetLoad
 		foreach($js as $e) {
 			// Check for external or local resource (http:// https:// etc)
 			if(strstr($e, '//') !== false) {
+				$this->parse_dns($e);
 				echo $this->script($e.$this->timestamp);
 			} else {
 				echo $this->script("/".$this->load_path.$e.$this->timestamp);
@@ -141,6 +147,35 @@ class AssetLoad
 	public static function script_route($path)
 	{
 		return self::script($path.'/'.$this->ci->router->fetch_class().'.js');
+	}
+	
+	/**
+	 * Parse and add the DNS paths to the local cache
+	 *
+	 * @param string $path
+	 * @return void
+	 */
+	private function parse_dns($path)
+	{
+		$pieces = parse_url($path);
+		
+		if(isset($pieces['host'])) {
+			if(!in_array(strtolower("//".$pieces['host']), $this->dns)) {
+				$this->dns[] = "//".strtolower($pieces['host']);
+			}
+		}
+	}
+	
+	/**
+	 * Generate and output the DNS prefetch link tag
+	 *
+	 * @return void
+	 */
+	private function dns_prefetch()
+	{
+		foreach($this->dns as $e) {
+			echo '<link rel="dns-prefetch" href="'.$e.'">';
+		}
 	}
 	
 	/**
