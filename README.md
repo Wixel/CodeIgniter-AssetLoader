@@ -10,7 +10,7 @@ Usage:
 2. Either autoload the library or explicitly load it in your controllers
 3. Define your asset manifest file for your environments and optionally provide default assets for all environments
 4. Replace the css link & script tags with `<?php $this->assetload->queue(); ?>` in your template head section
-5. Enjoy the sanity that follows! :)
+5. Enjoy the sanity that follows! :) 
 
 #  Methods
 
