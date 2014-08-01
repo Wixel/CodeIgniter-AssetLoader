@@ -18,6 +18,51 @@ Usage:
 AssetLoad::queue($cache_bust = false, $manifest_file_name = 'assets.ini', $manifest_path = 'assets/')
 ```
 
+Defining a Manifest File:
+-----
+
+Your manifest file should be called `assets.ini` and placed inside your parent assets directory: `/assets/assets.ini`
+
+# Structure
+
+```
+; Asset loader manifest file
+
+[defaults]
+css[] = "css/reset.css"
+js[]  = "js/html5shiv.min.js"
+
+[ie6]
+css[] = "css/chromeframe.css"
+js[] = "js/chromeframe.js"
+
+[ie7]
+css[] = "css/paddingfix.css"
+js[] = "js/chromeframe.js"
+
+[development]
+css[] = "css/application.css"
+js[]  = "js/vendor/modernizr-2.6.2.min.js"
+js[]  = "js/vendor/raphael-min.js"
+js[]  = "js/plugins.js"
+js[]  = "js/application.js"
+js[]  = "js/debugger.js"
+
+[production]
+css[] = "css/compiled.css"
+js[]  = "//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"
+js[]  = "js/compiled.js"
+
+[testing]
+css[] = "css/application.css"
+js[]  = "//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"
+js[]  = "js/vendor/modernizr-2.6.2.min.js"
+js[]  = "js/vendor/raphael-min.js"
+js[]  = "js/plugins.js"
+js[]  = "js/application.js"
+```
+
+
 # Changing Defaults
 
 The loader assumes all your assets are contained in child directories within the `/assets` directory in your `project root`, but you can change this 
@@ -74,50 +119,6 @@ In the application/dashboard header:
     <meta name="viewport" content="width=device-width">
 	<?php $this->assetload->queue(false, 'dashboard.ini'); ?>
 </head>
-```
-
-Defining a Manifest File:
------
-
-Your manifest file should be called `assets.ini` and placed inside your parent assets directory: `/assets/assets.ini`
-
-# Structure
-
-```
-; Asset loader manifest file
-
-[defaults]
-css[] = "css/reset.css"
-js[]  = "js/html5shiv.min.js"
-
-[ie6]
-css[] = "css/chromeframe.css"
-js[] = "js/chromeframe.js"
-
-[ie7]
-css[] = "css/paddingfix.css"
-js[] = "js/chromeframe.js"
-
-[development]
-css[] = "css/application.css"
-js[]  = "js/vendor/modernizr-2.6.2.min.js"
-js[]  = "js/vendor/raphael-min.js"
-js[]  = "js/plugins.js"
-js[]  = "js/application.js"
-js[]  = "js/debugger.js"
-
-[production]
-css[] = "css/compiled.css"
-js[]  = "//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"
-js[]  = "js/compiled.js"
-
-[testing]
-css[] = "css/application.css"
-js[]  = "//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"
-js[]  = "js/vendor/modernizr-2.6.2.min.js"
-js[]  = "js/vendor/raphael-min.js"
-js[]  = "js/plugins.js"
-js[]  = "js/application.js"
 ```
 
 #  TODO
