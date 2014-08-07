@@ -173,6 +173,8 @@ class AssetLoad
 	 */
 	private function dns_prefetch()
 	{
+		echo '<meta http-equiv="x-dns-prefetch-control" content="on">';
+		
 		foreach($this->dns as $e) {
 			echo '<link rel="dns-prefetch" href="'.$e.'">';
 		}
