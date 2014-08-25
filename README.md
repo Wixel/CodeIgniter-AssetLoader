@@ -45,7 +45,6 @@ css[] = "css/application.css"
 js[]  = "js/vendor/modernizr-2.6.2.min.js"
 js[]  = "js/vendor/raphael-min.js"
 js[]  = "js/plugins.js"
-js[]  = "js/application.js"
 js[]  = "js/debugger.js"
 
 [production]
@@ -60,6 +59,13 @@ js[]  = "js/vendor/modernizr-2.6.2.min.js"
 js[]  = "js/vendor/raphael-min.js"
 js[]  = "js/plugins.js"
 js[]  = "js/application.js"
+```
+
+To insert `script` tags having different attributes you can use following syntax:
+
+```
+js[]  = ["src => http://code.jquery.com/jquery-2.1.1.min.js", "async => true"]
+js[]  = ["src => js/application.js", "id => main-script"]
 ```
 
 
@@ -121,7 +127,11 @@ In the application/dashboard header:
 </head>
 ```
 
+# Contributors
+- Sean Nieuwoudt
+- [Imran Latif](https://github.com/ilatif/)
+
 #  TODO
 
 - Wildcard lazy-loader
-- Ability to specify link and script tag attributes like defer & async
+- Resolve all issues
