@@ -106,10 +106,14 @@ class AssetLoad
 		foreach($js as $e) {
 			// Check for external or local resource (http:// https:// etc)
 			if(strstr($e, '//') !== false) {
-				$this->parse_dns($e);
-				echo $this->script($e.$this->timestamp);
+				$e_info        = $this->_prepare_js_info($e);
+				$e_info['src'] = $e_info['src'] . $this->timestamp;
+				$this->parse_dns($e_info['src']);
+				echo $this->script($e_info);
 			} else {
-				echo $this->script("/".$this->load_path.$e.$this->timestamp);
+				$e_info        = $this->_prepare_js_info($e);
+				$e_info['src'] = "/" . $this->load_path . $e_info['src'] . $this->timestamp;
+				echo $this->script($e_info);
 			}
 		}	
 		
@@ -135,7 +139,12 @@ class AssetLoad
 	 */
 	private function script($path)
 	{
-		return '<script src="'.$path.'"></script>'."\n";
+		$script_template = array("<script ");
+		foreach($path as $key => $p) {
+			$script_template[] = "$key='$p'";
+		}
+		$script_template[] = "></script>";
+		return implode($script_template)."\n";
 	}
 	
 	/**
@@ -199,6 +208,29 @@ class AssetLoad
 	public function body_class()
 	{
 		echo $this->ci->router->fetch_class();
+	}
+
+	// prepares attributes needed to script tag
+	private function _prepare_js_info($path) {
+		$js_info     = array();
+		$path_length = strlen($path);
+
+		// string contains array syntax
+		if ($path[0] == '[' && $path[$path_length - 1] == ']') {
+			// remove wrapping square braces
+			$path[0] = '';
+			$path[$path_length - 1] = '';
+
+			// prepare info for script tag
+			$path_parts = explode(",", $path);
+			foreach($path_parts as $path_part) {
+				$path_part_meta = explode("=>", $path_part);
+				$js_info[trim($path_part_meta[0])] = trim($path_part_meta[1]);
+			}
+		} else {
+			$js_info['src'] = $path;
+		}
+		return $js_info;
 	}
 	
 } //EOC
