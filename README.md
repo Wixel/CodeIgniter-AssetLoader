@@ -128,7 +128,7 @@ In the application/dashboard header:
 ```
 
 # Contributors
-- Sean Nieuwoudt
+- [Sean Nieuwoudt](http://twitter.com/SeanNieuwoudt)
 - [Imran Latif](https://github.com/ilatif/)
 
 #  TODO
